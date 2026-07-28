@@ -84,7 +84,7 @@ Use the returned token as a `Bearer` token in the `Authorization` header for any
 
 ### Project structure
 
-```
+```text
 src/
   config/       # env, Sequelize instance, config.json for sequelize-cli
   constants/    # roles, application statuses, job types — single source of truth
@@ -119,7 +119,7 @@ npm run db:migrate:undo
 ```
 
 | Command | What it does |
-|---|---|
+| --- | --- |
 | `npm run dev` | Start the server with nodemon (auto-restart) |
 | `npm start` | Start the server normally |
 | `npm run db:migrate` | Create the database tables (sequelize-cli) |
@@ -131,10 +131,10 @@ npm run db:migrate:undo
 
 This is a closed, 3-person capstone team — not accepting outside contributions — but the same rules apply to all three of us:
 
-**Team split**
+### Team split
 
 | Track | Owns |
-|---|---|
+| --- | --- |
 | Victor — Foundation & Auth | config/, constants/, utils/, middleware/, auth.* (service/controller/routes), DB schema/migrations |
 | Kolade — Applicant Track | applicant.*, application.* (service/controller/routes), resume upload |
 | Glory — Employer Track | employer.*, jobListing.* (service/controller/routes), application review |
