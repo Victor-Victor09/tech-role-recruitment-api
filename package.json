@@ -1,0 +1,30 @@
+{
+  "name": "tech-role-recruiting-api",
+  "version": "0.1.0",
+  "description": "Recruiting System for Tech Roles — backend REST API (Node.js/Express/Sequelize)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo",
+    "db:seed": "sequelize-cli db:seed:all",
+    "test": "echo \"add unit/integration tests under tests/, then wire a runner here\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "sequelize": "^6.37.3",
+    "pg": "^8.11.5",
+    "pg-hstore": "^2.3.4",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "express-validator": "^7.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "sequelize-cli": "^6.6.2"
+  }
+}

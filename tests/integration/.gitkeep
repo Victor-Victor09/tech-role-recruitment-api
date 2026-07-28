@@ -1,0 +1,2 @@
+// Add one test file per resource's routes, e.g. application.routes.test.js.
+// Use supertest against src/app.js (not server.js) so no real port is opened.

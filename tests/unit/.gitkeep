@@ -1,0 +1,2 @@
+// Add one test file per service as you build it, e.g. application.service.test.js.
+// These call the service functions directly — no HTTP involved (see Section 8's WHY box).
