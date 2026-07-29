@@ -1,17 +1,12 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
+import config from './env.js';
 
-dotenv.config();
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-        host: process.env.DB_HOST,
-        dialect: process.env.DB_DIALECT,
-        logging: console.log,
-    }
+const sequelize = new Sequelize(config.databaseUrl, {
+    dialect: 'postgres',
+    logging: false, // Disable logging; set to console.log to see the raw SQL queries
+}
 );
 
 export default sequelize;
