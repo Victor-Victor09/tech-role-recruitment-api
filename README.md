@@ -1,24 +1,34 @@
 # Tech-Role Recruiting API
 
-A backend REST API for a recruiting platform focused on tech roles — applicants can build a profile, upload a resume, and apply to job listings; employers can post listings and review applications. Built as a 3-person capstone project.
+A backend RESTful API scaffold for a recruiting platform focused on tech roles — applicants can build a profile, upload a resume, and apply to job listings; employers can post listings and review applications. This repo currently contains the project skeleton and starter files; core business logic and route handling remain under development.
 
 ## Overview
 
-This project exists to demonstrate a properly layered Node.js/Express backend: routes hand off to controllers, controllers hand off to services, and only services touch the database. Every design decision — why this folder exists, why this table has this column — is written out in `Recruiting_System_Backend_Plan.docx` (shared alongside this repo). **This README is the fast path**: what the project does, how to run it, and how to contribute. Read the plan doc when you need the reasoning behind a decision, not just the decision itself.
+This project is structured to demonstrate a properly layered Node.js/Express backend: routes hand off to controllers, controllers hand off to services, and only services touch the database. The current repository is scaffolded and many `src/` files still contain TODO comments.
 
-**Built with:**
+## Structural design notes
 
-- [Node.js](https://nodejs.org/) + [Express](https://expressjs.com/) — HTTP server and routing
-- [PostgreSQL](https://www.postgresql.org/) via [Sequelize](https://sequelize.org/) — database, models, migrations, seeders
-- [JWT](https://jwt.io/) authentication, [bcrypt](https://www.npmjs.com/package/bcrypt) password hashing
-- [multer](https://www.npmjs.com/package/multer) for resume uploads
+- `src/app.js` should build the Express app and mount middleware and routes, but not call `app.listen()`.
+- `server.js` is the single entry point responsible only for starting the HTTP server.
+- `src/routes/index.js` should centralize route registration under `/api`, with child route modules for auth, applicants, employers, job listings, and applications.
+- Controllers should be thin and only transform request data and send responses; they should delegate business logic to services.
+- Services are the only layer allowed to interact with Sequelize models in `src/models/` and should handle data operations, validation, and domain rules.
+- Middleware lives in `src/middleware/` and should include authentication, authorization/role checks, validation, file upload handling, and centralized error handling.
+- Configuration should be read once in `src/config/env.js`, then consumed by `src/config/db.js` and other modules rather than accessing `process.env` directly throughout the app.
+
+**Built with (intended tech stack):**
+
+- Node.js + Express — HTTP server and routing.
+- PostgreSQL via Sequelize — database, models, migrations, seeders.
+- JWT authentication, bcrypt — password hashing.
+- multer package for resume uploads.
 
 ## Install
 
 **Prerequisites** — you'll need these installed before cloning:
 
-- [Node.js 18 or above](https://nodejs.org/en/download/)
-- [PostgreSQL](https://www.postgresql.org/download/), running locally or accessible via a connection string
+- Node.js 18 or above
+- PostgreSQL
 
 Then:
 
@@ -29,14 +39,20 @@ npm install
 cp .env.example .env
 ```
 
-Open `.env` and fill in real values — at minimum `DATABASE_URL` (pointing at your Postgres instance) and `JWT_SECRET` (any long random string).
+On Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Open `.env` and fill in real values. The repository includes `.env.example`; at minimum populate `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, and `NODE_ENV`.
 
 ## Usage / Getting started
 
 Once installed, create the database tables and start the server:
 
 ```bash
-npm run db:migrate    # creates the 5 tables — see src/migrations/README.md
+npm run db:migrate    # creates database tables via sequelize-cli
 npm run db:seed       # optional — sample applicants/employers/listings for local testing
 npm run dev           # starts the server on PORT (default 5000), auto-restarts on file changes
 ```
@@ -53,14 +69,22 @@ Use the returned token as a `Bearer` token in the `Authorization` header for any
 
 ## Documentation
 
-- **`Recruiting_System_Backend_Plan.docx`** — the full build plan: features, folder-structure rationale, database schema, Git workflow, team split, day-by-day timeline. Start here for *why*.
-- **`docs/database-schema.md`** — a markdown copy of the schema tables, kept in the repo so it doesn't only live in the Word doc.
-- **`docs/api-spec.md`** — endpoint reference, filled in incrementally as each route is built. Check here before assuming an endpoint doesn't exist yet.
-- Every stub file under `src/` has a header comment stating who owns it, what it's responsible for, and exactly what to build — read that before writing code in a file.
+- `docs/database-schema.md` — markdown copy of the database schema.
+- `docs/api-spec.md` — endpoint reference.
+- `.env.example` — sample environment configuration.
+- Note: `Recruiting_System_Backend_Plan.docx` is referenced in code comments, but it is not included in this repository.
+- Every stub file under `src/` has a header comment stating who owns it, what it is responsible for, and what to build — read that before writing code in a file.
+
+## Current implementation notes
+
+- `server.js` contains startup logic, but `src/app.js` is still a scaffold and does not mount real routes or middleware.
+- `src/config/env.js` is not implemented.
+- `src/config/db.js` is partially configured and currently expects `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, and `DB_DIALECT`, while `.env.example` uses `DATABASE_URL`. These should be aligned during implementation.
+- Most `src/controllers/`, `src/services/`, `src/routes/`, `src/models/`, and `src/middleware/` files still contain TODO comments.
 
 ### Project structure
 
-```
+```text
 src/
   config/       # env, Sequelize instance, config.json for sequelize-cli
   constants/    # roles, application statuses, job types — single source of truth
@@ -82,7 +106,7 @@ docs/           # api-spec.md, database-schema.md
 
 ## Development
 
-Run the test suite as you build (see `tests/unit/` and `tests/integration/`):
+Run the existing test stub:
 
 ```bash
 npm test
@@ -95,29 +119,27 @@ npm run db:migrate:undo
 ```
 
 | Command | What it does |
-|---|---|
+| --- | --- |
 | `npm run dev` | Start the server with nodemon (auto-restart) |
 | `npm start` | Start the server normally |
 | `npm run db:migrate` | Create the database tables (sequelize-cli) |
 | `npm run db:migrate:undo` | Roll back the last migration |
 | `npm run db:seed` | Insert sample data (sequelize-cli) |
-| `npm test` | Run the test suite |
+| `npm test` | Run the test stub |
 
 ## Contributing
 
 This is a closed, 3-person capstone team — not accepting outside contributions — but the same rules apply to all three of us:
 
-**Team split**
+### Team split
 
 | Track | Owns |
-|---|---|
+| --- | --- |
 | Victor — Foundation & Auth | config/, constants/, utils/, middleware/, auth.* (service/controller/routes), DB schema/migrations |
 | Kolade — Applicant Track | applicant.*, application.* (service/controller/routes), resume upload |
 | Glory — Employer Track | employer.*, jobListing.* (service/controller/routes), application review |
 
-See **Section 11** of the plan doc for the full micro-task breakdown and the coverage/backup plan if someone falls behind.
-
-**Git workflow** (full version in **Section 4** of the plan doc):
+**Git workflow**:
 
 - `main` is protected — all work happens on branches, merged via reviewed PRs.
 - Branch naming: `type/short-description` (e.g. `feature/applicant-auth`, `fix/job-search-filter`).
@@ -129,13 +151,19 @@ See **Section 11** of the plan doc for the full micro-task breakdown and the cov
 
 ## Acknowledgements
 
-- Folder-structure and build-order guidance from our tutor at TechCrush.
-- Database, middleware-order, and layering rationale developed collaboratively and recorded in `Recruiting_System_Backend_Plan.docx`.
+- Database, middleware-order, and layering rationale developed collaboratively.
 
 ## License
 
-Academic / internship capstone project — not currently licensed for reuse or redistribution. If this repo is later published publicly, add an [MIT License](https://opensource.org/licenses/MIT) here (the simplest permissive option) or confirm the license your program requires.
+Internship capstone project — not currently licensed for reuse or redistribution.
 
 ## Status
 
-Scaffolded — folders and stub files exist with build instructions in their header comments. Nothing is implemented yet.
+Scaffolded — folders and stub files exist with build instructions in their header comments. Core application logic and route wiring are not yet implemented.
+
+## Next steps
+
+- Implement `src/app.js`, mount `src/routes/index.js`, and register the middleware pipeline.
+- Complete `src/config/env.js` and align environment variables between `.env.example` and Sequelize config.
+- Wire the route/controller/service flow for auth, applicants, employers, job listings, and applications.
+- Add real tests under `tests/unit/` and `tests/integration/`, then replace the current `npm test` stub.
