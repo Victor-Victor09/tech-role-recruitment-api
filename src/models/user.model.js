@@ -1,25 +1,38 @@
-/**
- * src/models/user.model.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : model (Sequelize — schema definition + associations)
- *
- * Responsibility:
- *   Defines this table as a Sequelize model: fields, constraints, and how
- *   it relates to other models. No business rules here — that belongs in
- *   the matching *.service.js file, which calls Model.create()/.findAll()/etc.
- *
- * Build this file to:
- *   - Define with: id (UUID, defaultValue: DataTypes.UUIDV4, primaryKey), email (STRING, unique, allowNull: false), passwordHash (STRING, allowNull: false), role (ENUM via constants/roles.js, allowNull: false), phone (STRING, allowNull: true)
- *   - Enable timestamps: true (gives you createdAt/updatedAt for free)
- *   - Associations (in a separate associate(models) or at the bottom): User.hasOne(ApplicantProfile), User.hasOne(EmployerProfile)
- *
- * Depends on / imports from:
- *   - src/config/db.js (the Sequelize instance)
- *   - sequelize
- *   - src/constants/*.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 5 (Database Schema)
- */
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.js";
 
-// TODO: implement
+const User = sequelize.define(
+    "User",
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DatsTypes.UUIDV4,
+            primaryKey: true,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate:{ isEmail: true },
+        },
+        passwordHash: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        role: {
+            type: DataTypes.ENUM("applicant", "employer"),
+            allowNull: false,
+        },
+        phone: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+    },
+    {
+        tableName: "Users",
+        timestamps: true,
+    }
+);
+
+export default User;
+        
