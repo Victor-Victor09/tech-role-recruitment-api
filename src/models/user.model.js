@@ -6,7 +6,7 @@ const User = sequelize.define(
     {
         id: {
             type: DataTypes.UUID,
-            defaultValue: DatsTypes.UUIDV4,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
         email: {
@@ -29,7 +29,7 @@ const User = sequelize.define(
         },
     },
     {
-        tableName: "Users",
+        tableName: "users",
         timestamps: true,
     }
 );
