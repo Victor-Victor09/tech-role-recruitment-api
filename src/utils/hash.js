@@ -1,20 +1,10 @@
-/**
- * src/utils/hash.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : util
- *
- * Responsibility:
- *   Thin wrappers around bcrypt. Passwords are never stored or compared in plain text.
- *
- * Build this file to:
- *   - hashPassword(plain) -> bcrypt.hash(plain, saltRounds)
- *   - comparePassword(plain, hash) -> bcrypt.compare(plain, hash)
- *
- * Depends on / imports from:
- *   - bcrypt
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 7 (Stub Your Utils, Helpers & File Uploads)
- */
+import bcrypt from "bcrypt";
 
-// TODO: implement
+//thin wrappers around bcrypt so nobody re-implements
+//  password hashing slightly differently in two places
+
+// Number of rounds to use when hashing a password.
+// 10 is the default for bcrypt.
+const SALT_ROUNDS = 10;
+ export const hashPassword = (plain) => bcrypt.hash(plain, SALT_ROUNDS);
+ export const comparePassword = (plain, hash) => bcrypt.compare(plain, hash);
