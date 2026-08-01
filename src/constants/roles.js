@@ -2,7 +2,6 @@
 // of retyping the strings 'applicant' / 'employer'.
 // Reference: Recruiting_System_Backend_Plan.docx -> Section 2 (Features)
 
-module.exports = {
-  APPLICANT: "applicant",
-  EMPLOYER: "employer",
-};
+export const APPLICANT = "applicant";
+export const EMPLOYER = "employer";
+
