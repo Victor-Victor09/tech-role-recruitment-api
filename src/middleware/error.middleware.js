@@ -8,8 +8,17 @@
  *   - Always respond with the same JSON error shape via utils/response.js's sendError()
  *
  * Depends on / imports from:
- *   - src/utils/AppError.js
+ *   - src/utils/ApiError.js
  *   - src/utils/response.js
  */
+export default function errorMiddleware(err, req, res, next) {
+    const statusCode = err.statusCode || 500;
+    const message = err.isOperational ? err.message : "Something went wrong";
 
-// TODO: implement
+    console.error(err); // Log the error for debugging
+
+    res.status(statusCode).json({
+        status: "error",
+        message,
+    });
+}
