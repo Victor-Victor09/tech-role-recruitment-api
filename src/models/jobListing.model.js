@@ -1,14 +1,3 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';
-
-// define() tells Sequelize to map this JavaScript layout directly to a PostgreSQL table named 'Jobs'
-const jobListing = sequelize.define('JobListing', {
-
-
-
-
-
-
 /**
  * src/models/jobListing.model.js
  * ------------------------------------------------------------
