@@ -1,11 +1,5 @@
 /**
- * src/middleware/role.middleware.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : middleware
- *
- * Responsibility:
- *   Restricts a route to one or more roles. Must run AFTER auth.middleware.js.
+ *   This file restricts a route to one or more roles. Must run AFTER auth.middleware.js.
  *
  * Build this file to:
  *   - Export a factory: requireRole(...allowedRoles)
@@ -14,8 +8,15 @@
  *
  * Depends on / imports from:
  *   - src/utils/AppError.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 9 (Controllers & Middleware)
  */
 
 // TODO: implement
+import ApiError from "../utils/ApiError.js";
+
+export const requireRole = (role) => (req, res, next) => {
+
+    if (!req.user || req.user.role !== role){
+        return next( new ApiError("Yo do not have permission to perform this action", 403));
+    }
+    next();
+};
