@@ -1,7 +1,7 @@
 export const sendSuccess = (res, data, statusCode = 200) => {
-    res.statusCode(statusCode).json({status: "success", data })
+    res.status(statusCode).json({status: "success", message})
 };
 
-export const sendError = (res, data,statusCode = 500) => {
-    res.statusCode(statusCode).json({status: "error", data})
+export const sendError = (res, data, statusCode = 500) => {
+    res.status(statusCode).json({status: "error", message})
 };
