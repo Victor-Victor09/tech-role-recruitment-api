@@ -1,11 +1,5 @@
-/**
- * src/middleware/auth.middleware.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : middleware
- *
- * Responsibility:
- *   Verifies the JWT on the Authorization header and attaches req.user.
+/*
+ * This file verifies the JWT on the Authorization header and attaches req.user.
  *
  * Build this file to:
  *   - Read the Bearer token from the Authorization header
@@ -17,8 +11,28 @@
  *   - src/utils/token.js
  *   - src/utils/AppError.js
  *   - src/utils/catchAsync.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 9 (Controllers & Middleware)
  */
 
 // TODO: implement
+import { verifyToken } from "../utils/token.js";
+import ApiError from "../utils/ApiError.js";
+import catchAsync from "../utils/catchAsync.js";
+
+export const authMiddleware = catchAsync(async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        throw new ApiError("Authentication required", 401);
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    try{
+        const decoded = verifyToken(token);
+        req.user = decoded; // expect { id, role } in the token payload.
+        next();
+    } catch (err){
+        throw new ApiError("Invalid expired token", 401);
+    }
+    }
+)
