@@ -14,9 +14,9 @@ async function startServer() {
         console.log('Database connection has been established successfully.');
         
         // 2. Sync models with the database
-        await sequelize.sync({ alter: true }); // Use { force: true } for development to drop and recreate tables
-        console.log('Database tables verifiedsynchronized successfully.');
-        
+        // await sequelize.sync({ alter: true }); // Use { force: true } for development to drop and recreate tables
+        // console.log('Database tables verifiedsynchronized successfully.');
+        console.log('Skipping sync — schema is managed via migrations (npm run db:migrate).');
         
         app.listen(PORT, () => {
             console.log(`Server is running live on http://localhost:${PORT}`);
