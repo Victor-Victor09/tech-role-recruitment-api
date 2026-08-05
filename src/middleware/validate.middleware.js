@@ -1,11 +1,5 @@
 /**
- * src/middleware/validate.middleware.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : middleware
- *
- * Responsibility:
- *   Runs a resource's validator rules before the controller ever sees the request.
+ *   This file runs a resource's validator rules before the controller ever sees the request.
  *
  * Build this file to:
  *   - Export a factory: validate(validatorRules)
@@ -16,8 +10,19 @@
  * Depends on / imports from:
  *   - src/utils/AppError.js
  *   - src/validators/*.validator.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 9 (Controllers & Middleware)
  */
 
 // TODO: implement
+import { validationResult } from "express-validator";
+import ApiError from "../utils/ApiError.js";
+
+export const validate = (validations) => async (req, res, next) => {
+    await Promise.all(validations.map((rule) => rule.run(req)));
+
+    const errors = validationResult(req);
+    if (errors.isEmpty()){
+        return next();
+    }
+    const message = errors.array().map((e) => e.msg).join(", ");
+    next(new ApiError(message, 400));
+};
