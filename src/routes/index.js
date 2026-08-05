@@ -1,11 +1,5 @@
 /**
- * src/routes/index.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : route
- *
- * Responsibility:
- *   Mounts every resource router under /api. This is the one file app.js imports.
+ *   This fileMounts every resource router under /api. This is the one file app.js imports.
  *
  * Build this file to:
  *   - router.use('/auth', authRoutes)
@@ -18,7 +12,16 @@
  * Depends on / imports from:
  *   - all files in src/routes/
  *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 10 (Routes & Entry File)
  */
+import { Router } from "express";
 
-// TODO: implement
+const router = Router();
+
+// Uncomment each line aftfer their respective route files have been built.
+// router.use("/auth", authRoutes);
+// router.use("/applicants", applicantRoutes);
+// router.use("/employers", employerRoutes);
+// router.use("/jobs", jobListingRoutes);
+// router.use("/applications", applicationRoutes);
+
+export default router;
