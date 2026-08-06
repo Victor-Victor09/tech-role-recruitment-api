@@ -3,26 +3,32 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('employerProfiles', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      email: {
-        type: Sequelize.STRING,
+      userId: {
+        type: Sequelize.UUID,
         allowNull: false,
         unique: true,
+        references: {
+          model: 'users',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
-      passwordHash: {
+      companyName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      role: {
-        type: Sequelize.ENUM("applicant", "employer"),
-        allowNull: false,
+      companyDescription: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
-      phone: {
+      companyWebsite: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -40,6 +46,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
-  },
+    await queryInterface.dropTable('employerProfiles');
+  }
 };
