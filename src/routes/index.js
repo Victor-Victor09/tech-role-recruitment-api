@@ -14,11 +14,12 @@
  *
  */
 import { Router } from "express";
+import authRoutes from "./auth.routes.js";
 
 const router = Router();
 
 // Uncomment each line aftfer their respective route files have been built.
-// router.use("/auth", authRoutes);
+router.use("/auth", authRoutes);
 // router.use("/applicants", applicantRoutes);
 // router.use("/employers", employerRoutes);
 // router.use("/jobs", jobListingRoutes);

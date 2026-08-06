@@ -1,10 +1,4 @@
 /**
- * src/routes/auth.routes.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : route
- *
- * Responsibility:
  *   Wires auth URLs + verbs to auth.controller.js. No logic here.
  *
  * Build this file to:
@@ -16,7 +10,17 @@
  *   - src/middleware/validate.middleware.js
  *   - src/validators/auth.validator.js
  *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 10 (Routes & Entry File)
  */
 
-// TODO: implement
+import { Router } from "express";
+import * as authController from "../controllers/auth.controller.js";
+import { validate } from "../middleware/validate.middleware.js";
+import { registerValidator, loginValidator } from "../validators/auth.validator.js";
+import { authRateLimiter } from "../middleware/rateLimit.middleware.js";
+
+const router = Router();
+
+router.post("/register", authRateLimiter, validate(registerValidator), authController.register);
+router.post("/login", authRateLimiter, validate(loginValidator), authController.login);
+
+export default router;

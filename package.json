@@ -26,10 +26,11 @@
     "test": "echo \"add unit/integration tests under tests/, then wire a runner here\" && exit 0"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.22.2",
+    "express-rate-limit": "^8.6.2",
     "express-validator": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
@@ -42,6 +43,6 @@
     "sequelize-cli": "^6.6.2"
   },
   "allowScripts": {
-    "bcrypt@5.1.1": true
+    "bcrypt@6.0.0": true
   }
 }
