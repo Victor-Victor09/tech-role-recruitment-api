@@ -1,20 +1,19 @@
-/**
- * src/validators/auth.validator.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : validator
- *
- * Responsibility:
- *   Field presence, type, and format rules for this resource. Runs inside validate.middleware.js, before the controller sees the request.
- *
- * Build this file to:
- *   - register: email (required, valid format), password (required, min length), role (required, in ['applicant','employer'])
- *   - login: email + password required
- *
- * Depends on / imports from:
- *   - express-validator, or a small hand-rolled check function
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 7 (Stub Your Utils, Helpers & File Uploads)
- */
+import { body } from "express-validator";
 
-// TODO: implement
+export const registerValidator = [
+    body("email")
+        .notEmpty().withMessage("Email is required")
+        .isEmail().withMessage("Invalid email format"),
+    body("password")
+        .notEmpty().withMessage("Password is required")
+        .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+    body("role")
+        .notEmpty().withMessage("Role is required")
+        .isIn(["applicant", "employer"]).withMessage("Role must be either 'applicant' or 'employer'"),
+    body("phone").optional().isMobilePhone().withMessage("Invalid phone number format"),
+];
+
+export const loginValidator = [
+    body("email").notEmpty().withMessage("Email is required"),
+    body("password").notEmpty().withMessage("Password is required"),
+];
