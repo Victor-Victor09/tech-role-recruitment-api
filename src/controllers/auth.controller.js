@@ -1,10 +1,4 @@
 /**
- * src/controllers/auth.controller.js
- * ------------------------------------------------------------
- * Owner : Person A — Foundation & Auth
- * Layer : controller (request in, response out — thin)
- *
- * Responsibility:
  *   Pull what's needed off req, call the matching service function, pass
  *   the result to sendSuccess(). No SQL, no business rules here.
  *
@@ -17,7 +11,17 @@
  *   - src/utils/catchAsync.js
  *   - src/utils/response.js
  *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 9 (Controllers & Middleware)
  */
+import * as authService from "../services/auth.service.js";
+import catchAsync from "../utils/catchAsync.js";
+import { sendSuccess } from "../utils/response.js";
 
-// TODO: implement
+export const register = catchAsync(async (req, res) => {
+    const result = await authService.register(req.body);
+    sendSuccess(res, result, 201);
+});
+
+export const login = catchAsync(async (req, res) => {
+    const result = await authService.login(req.body);
+    sendSuccess(res, result, 200);
+});
