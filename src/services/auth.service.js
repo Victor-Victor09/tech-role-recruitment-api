@@ -27,7 +27,7 @@ export const register = async ({ email, password, role, phone}) => {
 
     const existingUser = await User.findOne({ where: { email }});
     if (existingUser) {
-        throw new ApiError(409, "Email already in use");
+        throw new ApiError("Email already in use", 409);
     }
 
     const passwordHash = await hashPassword(password);
@@ -48,9 +48,8 @@ export const register = async ({ email, password, role, phone}) => {
 };
 
 // Logs in a user by checking their email and password, then returns a JWT token if successful.
-export const login = async (email, password) => {
+export const login = async ({email, password}) => {
     const user = await User.findOne({ where: { email }});
-
     // Deliberately vague — don't reveal whether the email exists or the
     // password was wrong. Prevents attackers from probing which emails
     // are registered.
