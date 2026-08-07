@@ -1,25 +1,37 @@
-/**
- * src/services/employer.service.js
- * ------------------------------------------------------------
- * Owner : Person C — Employer Track
- * Layer : service (business logic — the CRUD "brain")
- *
- * Responsibility:
- *   This is where validation results are used, DB calls happen (via the
- *   matching model file), and business rules live. Controllers call these
- *   functions and do nothing else.
- *
- * Build this file to:
- *   - createProfile(userId, data)
- *   - getProfile(userId)
- *   - updateProfile(userId, data)
- *   - Rule: a user can only have one employer profile
- *
- * Depends on / imports from:
- *   - src/models/employerProfile.model.js
- *   - src/utils/AppError.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 8 (CRUD Services)
- */
+import EmployerProfile from "../models/employerProfile.model.js";
+import ApiError from "../utils/ApiError.js";
 
-// TODO: implement
+const createProfile = async (userId, data) => {
+    // Check if the user already has a profile
+    const existingProfile = await EmployerProfile.findOne({ where: { userId } });
+    if (existingProfile) {
+        throw new ApiError("Employer's profile already exists", 400);
+    }
+    // Create the new profile
+    const profile = await EmployerProfile.create({ ...data, userId });
+    return profile;
+}
+
+const getProfile = async (userId, data) => {
+    const profile = await EmployerProfile.findOne({ where: { userId } });
+    if (!profile) {
+        throw new ApiError("Employer's profile not found", 404);
+    }
+    return profile;
+}
+
+const updateProfile = async (userId, data) => {
+    const profile = await EmployerProfile.findOne({ where: { userId } });
+    if (!profile) {
+        throw new ApiError("Employer's profile not found", 404);
+    }
+    // Update the profile with the new data
+    await profile.update(data);
+    return profile;
+}
+
+export default {
+    createProfile,
+    getProfile,
+    updateProfile,
+};

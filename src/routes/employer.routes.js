@@ -1,23 +1,15 @@
-/**
- * src/routes/employer.routes.js
- * ------------------------------------------------------------
- * Owner : Person C — Employer Track
- * Layer : route
- *
- * Responsibility:
- *   Wires employer profile URLs. All routes require auth + role('employer').
- *
- * Build this file to:
- *   - POST /profile -> auth, role('employer'), validate(employerValidator), employerController.createProfile
- *   - GET /profile -> auth, role('employer'), employerController.getProfile
- *   - PATCH /profile -> auth, role('employer'), employerController.updateProfile
- *
- * Depends on / imports from:
- *   - src/controllers/employer.controller.js
- *   - src/middleware/auth.middleware.js
- *   - src/middleware/role.middleware.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 10 (Routes & Entry File)
- */
+import { Router } from "express";
+import * as employerController from "../controllers/employer.controller.js";
+import {authMiddleware as auth } from "../middleware/auth.middleware.js";
+import { requireRole } from "../middleware/role.middleware.js";
+import { validate } from "../middleware/validate.middleware.js";
+import { createProfileValidator, updateProfileValidator } from "../validators/employer.validator.js";
+import { writeActionRateLimiter } from "../middleware/rateLimit.middleware.js";
 
-// TODO: implement
+const router = Router();
+
+router.post("/profile", writeActionRateLimiter, auth, requireRole("employer"), validate(createProfileValidator), employerController.createProfile);
+router.get("/profile", writeActionRateLimiter, auth, requireRole("employer"), employerController.getProfile);
+router.patch("/profile", writeActionRateLimiter, auth, requireRole("employer"), validate(updateProfileValidator), employerController.updateProfile);
+
+export default router;
