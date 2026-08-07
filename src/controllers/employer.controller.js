@@ -1,24 +1,18 @@
-/**
- * src/controllers/employer.controller.js
- * ------------------------------------------------------------
- * Owner : Person C — Employer Track
- * Layer : controller (request in, response out — thin)
- *
- * Responsibility:
- *   Pull what's needed off req, call the matching service function, pass
- *   the result to sendSuccess(). No SQL, no business rules here.
- *
- * Build this file to:
- *   - createProfile
- *   - getProfile
- *   - updateProfile — each: pull req.user.id / req.body, call the service, sendSuccess
- *
- * Depends on / imports from:
- *   - src/services/employer.service.js
- *   - src/utils/catchAsync.js
- *   - src/utils/response.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 9 (Controllers & Middleware)
- */
+import catchAsync from "../utils/catchAsync.js";
+import employerService from "../services/employer.service.js";
+import { sendSuccess } from "../utils/response.js";
 
-// TODO: implement
+export const createProfile = catchAsync(async (req, res) => {
+    const profile = await employerService.createProfile(req.user.id, req.body);
+    sendSuccess(res, profile, "Employer profile created successfully", 201);
+});
+
+export const getProfile = catchAsync(async (req, res) => {
+    const profile = await employerService.getProfile(req.user.id);
+    sendSuccess(res, profile, "Employer profile retrieved successfully", 200);
+});
+
+export const updateProfile = catchAsync(async (req, res) => {                                           
+    const profile = await employerService.updateProfile(req.user.id, req.body);
+    sendSuccess(res, profile, "Employer profile updated successfully", 200);
+});                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
