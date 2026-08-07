@@ -10,6 +10,6 @@ const router = Router();
 
 router.post("/profile", writeActionRateLimiter, auth, requireRole("employer"), validate(createProfileValidator), employerController.createProfile);
 router.get("/profile", writeActionRateLimiter, auth, requireRole("employer"), employerController.getProfile);
-router.patch("/profile", auth, requireRole("employer"), writeActionRateLimiter, validate(updateProfileValidator), employerController.updateProfile);
+router.patch("/profile", writeActionRateLimiter, auth, requireRole("employer"), validate(updateProfileValidator), employerController.updateProfile);
 
 export default router;
