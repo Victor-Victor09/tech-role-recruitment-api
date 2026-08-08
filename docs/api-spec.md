@@ -2,14 +2,16 @@
 
 Fill this in as each route actually gets built — treat an unfilled row as "not built yet," not as documentation debt.
 
-## Auth (Person A)
+## Auth — ✅ Built
+
+Both routes are rate-limited via `authRateLimiter` (10 req/15 min).
 
 | Method | Path | Auth | Role | Description |
 |---|---|---|---|---|
 | POST | /api/auth/register | No | - | Create a user (applicant or employer) |
 | POST | /api/auth/login | No | - | Log in, returns a JWT |
 
-## Applicant profile (Person B)
+## Applicant profile — ⏳ Not built
 
 | Method | Path | Auth | Role | Description |
 |---|---|---|---|---|
@@ -17,7 +19,9 @@ Fill this in as each route actually gets built — treat an unfilled row as "not
 | GET | /api/applicants/profile | Yes | applicant | Get your own profile |
 | PATCH | /api/applicants/profile | Yes | applicant | Update your own profile |
 
-## Employer profile (Person C)
+## Employer profile — ✅ Built
+
+All three routes, including the GET, are rate-limited via `writeActionRateLimiter` (30 req/15 min) — intentional, not a copy-paste artifact.
 
 | Method | Path | Auth | Role | Description |
 |---|---|---|---|---|
@@ -25,7 +29,7 @@ Fill this in as each route actually gets built — treat an unfilled row as "not
 | GET | /api/employers/profile | Yes | employer | Get your own profile |
 | PATCH | /api/employers/profile | Yes | employer | Update your own profile |
 
-## Job listings (Person C)
+## Job listings — ⏳ Not built
 
 | Method | Path | Auth | Role | Description |
 |---|---|---|---|---|
@@ -35,7 +39,7 @@ Fill this in as each route actually gets built — treat an unfilled row as "not
 | PATCH | /api/jobs/:id | Yes | employer (owner) | Edit a listing |
 | DELETE | /api/jobs/:id | Yes | employer (owner) | Soft-close a listing |
 
-## Applications (Person B / Person C)
+## Applications — ⏳ Not built
 
 | Method | Path | Auth | Role | Description |
 |---|---|---|---|---|
