@@ -1,61 +1,66 @@
 # Database Schema
 
-Markdown copy of Section 5 in `Recruiting_System_Backend_Plan.docx` — keep the two in sync if the schema changes.
+Reflects the actual applied migrations in `src/migrations/` (not the original plan doc — see note on drift below). Keep this in sync whenever a migration changes.
 
 ## users
 One row per person, applicant or employer. Auth lives here; profile detail lives in the two tables below.
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
-| id | UUID | PK, default uuid_generate_v4() | Required for every user |
-| email | VARCHAR(255) | UNIQUE, NOT NULL | Validate format before insert |
-| password_hash | VARCHAR(255) | NOT NULL | Hash with bcrypt in the service layer |
+| id | UUID | PK, default UUIDV4 | |
+| email | STRING | UNIQUE, NOT NULL | Validate format before insert |
+| passwordHash | STRING | NOT NULL | Hash with bcrypt in the service layer |
 | role | ENUM('applicant','employer') | NOT NULL | Decides which profile table this user owns |
-| phone | VARCHAR(20) | NULLABLE | Validate format if present |
-| created_at | TIMESTAMP | DEFAULT now() | |
-| updated_at | TIMESTAMP | DEFAULT now() | Update on every PATCH/PUT |
+| phone | STRING | NULLABLE | Validate format if present |
+| createdAt / updatedAt | DATE | NOT NULL, default NOW | |
 
-## applicant_profiles
-One-to-one with users.
+## applicantProfiles
+One-to-one with `users`.
 
-| Column | Type | Constraints | Notes |
-|---|---|---|---|
-| id | UUID | PK | |
-| user_id | UUID | FK -> users.id, UNIQUE, NOT NULL | One profile per user |
-| full_name | VARCHAR(255) | NOT NULL | |
-| tech_stack | TEXT[] or VARCHAR | NULLABLE | Array/JSON or comma list |
-| years_of_experience | INTEGER | NOT NULL, >= 0 | |
-| linkedin_url | VARCHAR(255) | NULLABLE | |
-| work_preference | ENUM('remote','hybrid','onsite') | NOT NULL | |
-| resume_url | VARCHAR(255) | NULLABLE | Store the path/URL, not the file |
-| created_at / updated_at | TIMESTAMP | DEFAULT now() | |
-
-## employer_profiles
-One-to-one with users.
+⚠️ **Known drift from the original plan doc** — applied here, not yet reconciled:
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
 | id | UUID | PK | |
-| user_id | UUID | FK -> users.id, UNIQUE, NOT NULL | |
-| company_name | VARCHAR(255) | NOT NULL | |
-| company_description | TEXT | NULLABLE | |
-| website | VARCHAR(255) | NULLABLE | |
-| created_at / updated_at | TIMESTAMP | DEFAULT now() | |
+| userId | UUID | FK → users.id, UNIQUE, NOT NULL, CASCADE | One profile per user |
+| firstName | STRING | NOT NULL | Plan doc had a single `full_name` |
+| lastName | STRING | NOT NULL | Plan doc had a single `full_name` |
+| techstack | ARRAY(STRING) | NULLABLE | Lowercase `techstack`, breaks camelCase convention — intentional for now |
+| yearOfExperience | INTEGER | NOT NULL, default 0 | Plan doc had `yearsOfExperience` (plural) |
+| linkedinURL | STRING | NULLABLE | Plan doc had `linkedinUrl` |
+| githubURL | STRING | NULLABLE | Not in original plan doc — added |
+| resume | STRING | NULLABLE | Stores path/URL, not the file. Plan doc had `resume_url` |
+| createdAt / updatedAt | DATE | NOT NULL, default NOW | |
 
-## job_listings
+*(work_preference from the original plan is not present in this migration — confirm with Kolade whether it's intentionally deferred or missing.)*
+
+## employerProfiles
+One-to-one with `users`.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| id | UUID | PK | |
+| userId | UUID | FK → users.id, UNIQUE, NOT NULL, CASCADE | |
+| companyName | STRING | NOT NULL | |
+| companyDescription | TEXT | NULLABLE | |
+| companyWebsite | STRING | NULLABLE | Plan doc had `website` |
+| createdAt / updatedAt | DATE | NOT NULL, default NOW | |
+
+## jobListings
 Created by an employer.
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
 | id | UUID | PK | |
-| employer_id | UUID | FK -> employer_profiles.id, NOT NULL | |
-| title | VARCHAR(255) | NOT NULL | |
+| employerId | UUID | FK → employerProfiles.id, NOT NULL, CASCADE | |
+| title | STRING | NOT NULL | |
 | description | TEXT | NOT NULL | |
-| tech_stack | TEXT[] or VARCHAR | NULLABLE | Used for search/filter |
-| work_preference | ENUM('remote','hybrid','onsite') | NOT NULL | Used for search/filter |
-| location | VARCHAR(255) | NULLABLE | |
-| status | ENUM('open','closed') | DEFAULT 'open' | Closed listings reject new applications |
-| created_at / updated_at | TIMESTAMP | DEFAULT now() | |
+| techRole | STRING | NOT NULL | Not in the original plan doc |
+| ~~techStack~~ | ARRAY(STRING) | — | **Commented out in the migration** — not currently a real column, despite being in the plan doc for search/filter |
+| workPreference | ENUM('remote','on-site','hybrid') | NOT NULL | Plan doc used `'onsite'` (no hyphen) — this migration uses `'on-site'`; keep validators consistent with the DB enum |
+| location | STRING | NULLABLE | |
+| status | ENUM('open','closed') | NOT NULL, default 'open' | Closed listings reject new applications |
+| createdAt / updatedAt | DATE | NOT NULL, default NOW | |
 
 ## applications
 Links an applicant to a job listing. This is where the audit trail lives.
@@ -63,10 +68,10 @@ Links an applicant to a job listing. This is where the audit trail lives.
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
 | id | UUID | PK | |
-| applicant_id | UUID | FK -> applicant_profiles.id, NOT NULL | |
-| job_listing_id | UUID | FK -> job_listings.id, NOT NULL | |
-| status | ENUM('applied','under review','rejected','hired') | DEFAULT 'applied' | Enforce in DB AND validator |
-| cover_note | TEXT | NULLABLE | |
-| applied_at | TIMESTAMP | DEFAULT now() | Part of the audit trail |
-| updated_at | TIMESTAMP | DEFAULT now() | Update whenever status changes |
-| cancelled_at | TIMESTAMP | NULLABLE | Soft delete — set instead of deleting the row |
+| applicantId | UUID | FK → applicantProfiles.id, NOT NULL, CASCADE | |
+| jobListingId | UUID | FK → jobListings.id, NOT NULL, CASCADE | |
+| status | ENUM('applied','under review','hired','rejected') | NOT NULL, default 'applied' | Enforce in DB AND validator |
+| coverNote | TEXT | NULLABLE | |
+| appliedAt | DATE | NOT NULL, default NOW | Part of the audit trail |
+| updatedAt | DATE | NOT NULL, default NOW | Update whenever status changes |
+| cancelledAt | DATE | NULLABLE | Soft delete — set instead of deleting the row |
