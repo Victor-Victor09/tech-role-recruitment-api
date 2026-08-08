@@ -77,10 +77,13 @@ Use the returned token as a `Bearer` token in the `Authorization` header for any
 
 ## Current implementation notes
 
-- `server.js` contains startup logic, but `src/app.js` is still a scaffold and does not mount real routes or middleware.
-- `src/config/env.js` is not implemented.
-- `src/config/db.js` is partially configured and currently expects `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, and `DB_DIALECT`, while `.env.example` uses `DATABASE_URL`. These should be aligned during implementation.
-- Most `src/controllers/`, `src/services/`, `src/routes/`, `src/models/`, and `src/middleware/` files still contain TODO comments.
+- `src/app.js` builds the Express app, mounts CORS/JSON middleware, the error middleware, and `/api` routes.
+- `src/config/env.js` is implemented — reads and validates `DATABASE_URL` and `JWT_SECRET` at startup, fails fast if missing.
+- `src/config/db.js` is implemented and uses `DATABASE_URL` (aligned with `.env.example`).
+- **Foundation & Auth (Victor)** — done. `auth.service.js`, `auth.controller.js`, `auth.routes.js` implemented and mounted.
+- **Employer track (Glory)** — done. `employer.service.js`, `employer.controller.js`, `employer.routes.js` implemented and mounted. Rate limiting (`writeActionRateLimiter`) applied on write routes.
+- **Applicant, Job Listing, and Application tracks (Kolade)** — still stub files with TODO headers, not yet mounted in `src/routes/index.js`.
+- All five migrations (`users`, `applicantProfiles`, `employerProfiles`, `jobListings`, `applications`) are written and applied — see `docs/database-schema.md` for the actual applied schema, which has drifted in a few places from the original plan doc (documented there).
 
 ### Project structure
 
@@ -159,7 +162,7 @@ Internship capstone project — not currently licensed for reuse or redistributi
 
 ## Status
 
-Scaffolded — folders and stub files exist with build instructions in their header comments. Core application logic and route wiring are not yet implemented.
+Foundation, Auth, and Employer tracks are implemented and mounted under `/api`. Applicant, Job Listing, and Application tracks remain scaffolded — service/controller/route files exist with TODO headers but are not yet wired up or mounted.
 
 ## Next steps
 
