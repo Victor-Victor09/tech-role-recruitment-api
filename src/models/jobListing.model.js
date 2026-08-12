@@ -1,10 +1,4 @@
 /**
- * src/models/jobListing.model.js
- * ------------------------------------------------------------
- * Owner : Person C — Employer Track
- * Layer : model (Sequelize — schema definition + associations)
- *
- * Responsibility:
  *   Defines this table as a Sequelize model: fields, constraints, and how
  *   it relates to other models. No business rules here — that belongs in
  *   the matching *.service.js file, which calls Model.create()/.findAll()/etc.
@@ -17,8 +11,62 @@
  *   - src/config/db.js (the Sequelize instance)
  *   - sequelize
  *   - src/constants/*.js
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 5 (Database Schema)
  */
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.js";
+import EmployerProfile from "./employerProfile.model.js";
+import {WORK_PREFERENCE, LISTING_STATUS} from "../constants/jobTypes.js";
 
-// TODO: implement
+const JobListing = sequelize.define(
+    "JobListing",
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        employerId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: EmployerProfile,
+                key: "id",
+            },
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        techRole: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        workPreference: {
+            type: DataTypes.ENUM(...Object.values(WORK_PREFERENCE)),
+            allowNull: false,
+        },
+        location: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        status: {
+            type: DataTypes.ENUM(...Object.values(LISTING_STATUS)),
+            defaultValue: LISTING_STATUS.OPEN,
+            allowNull: false,
+        },
+    },
+    {
+        tableName: "jobListings",
+        timestamps: true,
+    }
+);
+// Associations — lets us do JobListing.include(EmployerProfile) later
+// (e.g. showing company name alongside a listing in search results).
+JobListing.belongsTo(EmployerProfile, { foreignKey: "employerId", as: "employerProfile" });
+EmployerProfile.hasMany(JobListing, { foreignKey: "employerId", as: "jobListings" });
+
+export default JobListing;
