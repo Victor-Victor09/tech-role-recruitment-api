@@ -19,7 +19,7 @@ const router = Router();
 router.use("/auth", authRoutes);
 // router.use("/applicants", applicantRoutes);
 router.use("/employers", employerRoutes);
-// router.use("/jobs", jobListingRoutes);
+router.use("/jobs", jobListingRoutes);
 // router.use("/applications", applicationRoutes);
 
 export default router;
