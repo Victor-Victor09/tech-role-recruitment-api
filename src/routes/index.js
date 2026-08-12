@@ -12,6 +12,7 @@
 import { Router } from "express";
 import authRoutes from "./auth.routes.js";
 import employerRoutes from "./employer.routes.js";
+import jobListingRoutes from "./jobListing.routes.js";
 
 const router = Router();
 
