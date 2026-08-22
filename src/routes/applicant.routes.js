@@ -45,7 +45,7 @@ router.post(
     applicantController.createProfile
 );
 
-router.get("/profile", auth, requireRole(APPLICANT), applicantController.getProfile);
+router.get("/profile", writeActionRateLimiter, auth, requireRole(APPLICANT), applicantController.getProfile);
 
 router.patch(
     "/profile",
