@@ -24,6 +24,9 @@ build/
 .npm/
 .eslintcache
 
+# postman/
 .postman/
 postman/
 
+response.json
+url_audit.txt

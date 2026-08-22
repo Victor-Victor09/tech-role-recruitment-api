@@ -32,7 +32,9 @@ export const authMiddleware = catchAsync(async (req, res, next) => {
         req.user = decoded; // expect { id, role } in the token payload.
         next();
     } catch (err){
+        if (err.name === "TokenExpiredError") {
+            throw new ApiError("Session expired, please log in again", 401);
+        }
         throw new ApiError("Invalid expired token", 401);
     }
-    }
-)
+})

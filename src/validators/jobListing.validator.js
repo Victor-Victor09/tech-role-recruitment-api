@@ -1,22 +1,28 @@
-/**
- * src/validators/jobListing.validator.js
- * ------------------------------------------------------------
- * Owner : Person C — Employer Track
- * Layer : validator
- *
- * Responsibility:
- *   Field presence, type, and format rules for this resource. Runs inside validate.middleware.js, before the controller sees the request.
- *
- * Build this file to:
- *   - title (required)
- *   - description (required)
- *   - workPreference (required, in ['remote','hybrid','onsite'])
- *   - status, if provided on update, in ['open','closed']
- *
- * Depends on / imports from:
- *   - express-validator, or a small hand-rolled check function
- *
- * Reference: Recruiting_System_Backend_Plan.docx -> Section 7 (Stub Your Utils, Helpers & File Uploads)
- */
+import { body } from "express-validator";
+import { WORK_PREFERENCE } from "../constants/jobTypes.js";
 
-// TODO: implement
+const workPreferenceValues = Object.values(WORK_PREFERENCE);
+
+export const createJobListingValidator = [
+    body("title")
+        .notEmpty().withMessage("Job title is required"),
+    body("description")
+        .notEmpty().withMessage("Job description is required"),
+    body("techRole")
+        .notEmpty().withMessage("Tech role is required"),
+    body("workPreference")
+        .notEmpty().withMessage("Work preference is required")
+        .isIn(workPreferenceValues).withMessage("Work preference is not valid"),
+]
+
+export const updateJobListingValidator = [
+    body("title")
+        .optional().notEmpty().withMessage("Job title cannot be empty"),
+    body("description")
+        .optional().notEmpty().withMessage("Job description cannot be empty"),
+    body("techRole")
+        .optional().notEmpty().withMessage("Tech role cannot be empty"),
+    body("workPreference")
+        .optional().notEmpty().withMessage("Work preference cannot be empty")
+        .isIn(workPreferenceValues).withMessage("Work preference is not valid"),
+]
