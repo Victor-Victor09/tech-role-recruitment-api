@@ -12,6 +12,7 @@
 import { Router } from "express";
 import authRoutes from "./auth.routes.js";
 import employerRoutes from "./employer.routes.js";
+import jobListingRoutes from "./jobListing.routes.js";
 
 const router = Router();
 
@@ -19,7 +20,7 @@ const router = Router();
 router.use("/auth", authRoutes);
 // router.use("/applicants", applicantRoutes);
 router.use("/employers", employerRoutes);
-// router.use("/jobs", jobListingRoutes);
+router.use("/jobs", jobListingRoutes);
 // router.use("/applications", applicationRoutes);
 
 export default router;
