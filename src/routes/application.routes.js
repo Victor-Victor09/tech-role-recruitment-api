@@ -52,10 +52,10 @@ router.post(
 // Fixed routes (applicant/me, employer/me) must be registered before
 // the dynamic /:id route below — otherwise Express matches "me" as an
 // :id param and both of these become unreachable.
-router.get("/applicant/me", auth, requireRole(APPLICANT), applicationController.listForApplicant);
-router.get("/employer/me", auth, requireRole(EMPLOYER), applicationController.listForEmployer);
+router.get("/applicant/me", writeActionRateLimiter, auth, requireRole(APPLICANT), applicationController.listForApplicant);
+router.get("/employer/me", writeActionRateLimiter, auth, requireRole(EMPLOYER), applicationController.listForEmployer);
 
-router.get("/:id", auth, applicationController.getById);
+router.get("/:id", writeActionRateLimiter, auth, applicationController.getById);
 
 router.patch(
     "/:id",
