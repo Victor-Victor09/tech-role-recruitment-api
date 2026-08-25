@@ -1,11 +1,7 @@
 {
   "name": "tech-role-recruiting-api",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Recruiting System for Tech Roles — backend REST API (Node.js/Express/Sequelize)",
-  "homepage": "https://github.com/Victor-Victor09/tech-role-recruitment-api#readme",
-  "bugs": {
-    "url": "https://github.com/Victor-Victor09/tech-role-recruitment-api/issues"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Victor-Victor09/tech-role-recruitment-api.git"

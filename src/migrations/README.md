@@ -1,6 +1,6 @@
 # Migrations
 
-Owner: Person A — Foundation & Auth
+Foundation & Auth
 
 Don't hand-write migration files here — generate them with sequelize-cli so the
 filename/timestamp format is correct, then fill in the `up`/`down` functions

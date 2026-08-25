@@ -8,7 +8,8 @@ export default class ApiError extends Error {
     }
 }
 
-/** This is a utility function to create an AppError
-*** instance with a specific message and status code.
-*** It is a standard way to throw an error with an
-*** HTTP status code attached.*/
+/*
+This is a utility function to create an AppError instance
+with a specific message and status code.
+It is a standard way to throw an error with an HTTP status code attached.
+*/

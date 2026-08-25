@@ -1,6 +1,6 @@
 # Seeders
 
-Owner: whoever needs sample data first — usually Person A on Day 1-2.
+Whoever needs sample data first — usually person  on Auth foumdation — sets this file up.
 
 Generate with sequelize-cli, don't hand-write the filename:
 
