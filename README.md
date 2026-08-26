@@ -172,4 +172,3 @@ Complete. All five tracks (auth, applicant, employer, job listing, application) 
 ## Possible follow-ups
 
 - Add real tests under `tests/unit/` and `tests/integration/`, then retire the current `npm test` stub. This is the one deliberately deferred item; everything else in this list is optional polish.
-- Align `applicantProfiles.techstack` to camelCase (`techStack`) if the team decides the naming drift is worth fixing.
