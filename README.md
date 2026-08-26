@@ -1,27 +1,28 @@
 # Tech-Role Recruiting API
 
-A backend RESTful API scaffold for a recruiting platform focused on tech roles — applicants can build a profile, upload a resume, and apply to job listings; employers can post listings and review applications. This repo currently contains the project skeleton and starter files; core business logic and route handling remain under development.
+A backend RESTful API for a recruiting platform focused on tech roles. Applicants build a profile, upload a resume, and apply to job listings. Employers post listings and review applications.
 
 ## Overview
 
-This project is structured to demonstrate a properly layered Node.js/Express backend: routes hand off to controllers, controllers hand off to services, and only services touch the database. The current repository is scaffolded and many `src/` files still contain TODO comments.
+The project is a layered Node.js/Express backend: routes hand off to controllers, controllers hand off to services, and only services touch the database. All five resource tracks (auth, applicants, employers, job listings, applications) are implemented and mounted under `/api`.
 
 ## Structural design notes
 
-- `src/app.js` should build the Express app and mount middleware and routes, but not call `app.listen()`.
+- `src/app.js` builds the Express app and mounts middleware and routes. It doesn't call `app.listen()`.
 - `server.js` is the single entry point responsible only for starting the HTTP server.
-- `src/routes/index.js` should centralize route registration under `/api`, with child route modules for auth, applicants, employers, job listings, and applications.
-- Controllers should be thin and only transform request data and send responses; they should delegate business logic to services.
-- Services are the only layer allowed to interact with Sequelize models in `src/models/` and should handle data operations, validation, and domain rules.
-- Middleware lives in `src/middleware/` and should include authentication, authorization/role checks, validation, file upload handling, and centralized error handling.
-- Configuration should be read once in `src/config/env.js`, then consumed by `src/config/db.js` and other modules rather than accessing `process.env` directly throughout the app.
+- `src/routes/index.js` centralizes route registration under `/api`, with child route modules for auth, applicants, employers, job listings, and applications.
+- Controllers are thin. They transform request data and send responses, and delegate business logic to services.
+- Services are the only layer allowed to interact with Sequelize models in `src/models/`. They handle data operations, validation, and domain rules.
+- Middleware lives in `src/middleware/`: authentication, authorization/role checks, request validation, file upload handling, rate limiting, and centralized error handling.
+- Configuration is read once in `src/config/env.js`, then consumed by `src/config/db.js` and other modules rather than accessing `process.env` directly throughout the app.
 
-**Built with (intended tech stack):**
+**Built with:**
 
-- Node.js + Express — HTTP server and routing.
-- PostgreSQL via Sequelize — database, models, migrations, seeders.
-- JWT authentication, bcrypt — password hashing.
-- multer package for resume uploads.
+- Node.js + Express for the HTTP server and routing.
+- PostgreSQL via Sequelize for the database, models, migrations, and seeders.
+- JWT authentication and bcrypt for password hashing.
+- multer for resume uploads.
+- express-rate-limit for request throttling on auth and write-heavy routes.
 
 ## Install
 
@@ -45,19 +46,19 @@ On Windows PowerShell:
 Copy-Item .env.example .env
 ```
 
-Open `.env` and fill in real values. The repository includes `.env.example`; at minimum populate `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, and `NODE_ENV`.
+Open `.env` and fill in real values. At minimum populate `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, and `NODE_ENV`.
 
 ## Usage / Getting started
 
-Once installed, create the database tables and start the server:
-
 ```bash
 npm run db:migrate    # creates database tables via sequelize-cli
-npm run db:seed       # optional — sample applicants/employers/listings for local testing
+npm run db:seed       # sample applicants, employers, and job listings for local testing
 npm run dev           # starts the server on PORT (default 5000), auto-restarts on file changes
 ```
 
-With the server running, register a user and log in to get a JWT:
+`npm run db:seed` inserts three applicants, three employers, three job listings, and one sample application, each with a real resume PDF copied into `uploads/resumes/`. It's safe to run more than once; every insert checks for an existing row first, so it won't duplicate data or pile up extra files on disk.
+
+Register a user and log in to get a JWT:
 
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
@@ -69,21 +70,21 @@ Use the returned token as a `Bearer` token in the `Authorization` header for any
 
 ## Documentation
 
-- `docs/database-schema.md` — markdown copy of the database schema.
-- `docs/api-spec.md` — endpoint reference.
+- `docs/database-schema.md` — the actual applied schema, including where it drifted from the original plan doc.
+- `docs/api-spec.md` — full endpoint reference.
 - `.env.example` — sample environment configuration.
-- Note: `Recruiting_System_Backend_Plan.docx` is referenced in code comments, but it is not included in this repository.
-- Every stub file under `src/` has a header comment stating who owns it, what it is responsible for, and what to build — read that before writing code in a file.
+- `Recruiting_System_Backend_Plan.docx` is referenced in code comments but isn't included in this repository.
 
-## Current implementation notes
+## Implementation notes
 
 - `src/app.js` builds the Express app, mounts CORS/JSON middleware, the error middleware, and `/api` routes.
-- `src/config/env.js` is implemented — reads and validates `DATABASE_URL` and `JWT_SECRET` at startup, fails fast if missing.
-- `src/config/db.js` is implemented and uses `DATABASE_URL` (aligned with `.env.example`).
-- **Foundation & Auth (Victor)** — done. `auth.service.js`, `auth.controller.js`, `auth.routes.js` implemented and mounted.
-- **Employer track (Glory)** — done. `employer.service.js`, `employer.controller.js`, `employer.routes.js` implemented and mounted. Rate limiting (`writeActionRateLimiter`) applied on write routes.
-- **Applicant, Job Listing, and Application tracks (Kolade)** — still stub files with TODO headers, not yet mounted in `src/routes/index.js`.
-- All five migrations (`users`, `applicantProfiles`, `employerProfiles`, `jobListings`, `applications`) are written and applied — see `docs/database-schema.md` for the actual applied schema, which has drifted in a few places from the original plan doc (documented there).
+- `src/config/env.js` reads and validates `DATABASE_URL` and `JWT_SECRET` at startup, and fails fast if either is missing.
+- All five resource tracks, auth, applicant, employer, job listing, and application, are implemented and mounted in `src/routes/index.js`.
+- Rate limiting is applied throughout: `authRateLimiter` on the two auth routes, `writeActionRateLimiter` on writes and on a handful of reads where it was applied deliberately for consistency or to slow down ID enumeration. See `docs/api-spec.md` for exactly which routes and why.
+- Ownership checks on applicant and application resources return 404 rather than 403 for non-owned resources, to avoid leaking whether a resource exists.
+- All five migrations (`users`, `applicantProfiles`, `employerProfiles`, `jobListings`, `applications`) are written and applied. See `docs/database-schema.md` for the applied schema, which drifted in a few places from the original plan doc.
+- `jobListings` never got a separate `techStack` array column. The plan doc's field was replaced by `techRole`, a single string, and search/filter runs against that instead.
+- `applicantProfiles.techstack` is a real, active field (an array of skills, distinct from `jobListings.techRole`), currently lowercase rather than camelCase. That naming drift is intentional and deferred, not an oversight.
 
 ### Project structure
 
@@ -93,12 +94,12 @@ src/
   constants/    # roles, application statuses, job types — single source of truth
   models/       # Sequelize model definitions + associations, one file per table
   migrations/   # sequelize-cli migrations — generate, don't hand-write
-  seeders/      # sequelize-cli seeders — generate, don't hand-write
+  seeders/      # sequelize-cli seeders, plus fixtures/ for the sample resume PDFs
   services/     # business logic — the only layer that talks to models
   controllers/  # thin request-in/response-out layer
-  middleware/   # auth, role, validate, upload, error handling
+  middleware/   # auth, role, validate, upload, rate limiting, error handling
   routes/       # URL + verb -> middleware chain -> controller
-  utils/        # AppError, catchAsync, response shape, hash, token, logger
+  utils/        # ApiError, catchAsync, response shape, hash, token, logger
   validators/   # field-level validation rules, one file per resource
   app.js        # builds the Express app — no app.listen()
 server.js       # the only file that calls app.listen()
@@ -121,6 +122,12 @@ Rolling back a migration during local development:
 npm run db:migrate:undo
 ```
 
+Rolling back seed data specifically (not the same command, and not interchangeable, `db:migrate:undo` rolls back a table migration, not seeded rows):
+
+```bash
+npx sequelize-cli db:seed:undo:all
+```
+
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Start the server with nodemon (auto-restart) |
@@ -128,11 +135,12 @@ npm run db:migrate:undo
 | `npm run db:migrate` | Create the database tables (sequelize-cli) |
 | `npm run db:migrate:undo` | Roll back the last migration |
 | `npm run db:seed` | Insert sample data (sequelize-cli) |
+| `npx sequelize-cli db:seed:undo:all` | Remove seeded data and its resume files |
 | `npm test` | Run the test stub |
 
 ## Contributing
 
-This is a closed, 3-person capstone team — not accepting outside contributions — but the same rules apply to all three of us:
+This was a closed, three-person capstone team, not open to outside contributions, but the same rules applied to all three of us throughout the build.
 
 ### Team split
 
@@ -142,15 +150,12 @@ This is a closed, 3-person capstone team — not accepting outside contributions
 | Kolade — Applicant Track | applicant.*, application.* (service/controller/routes), resume upload |
 | Glory — Employer Track | employer.*, jobListing.* (service/controller/routes), application review |
 
-**Git workflow**:
+**Git workflow:**
 
-- `main` is protected — all work happens on branches, merged via reviewed PRs.
+- `main` was protected. All work happened on branches, merged via reviewed PRs.
 - Branch naming: `type/short-description` (e.g. `feature/applicant-auth`, `fix/job-search-filter`).
 - Commit messages: imperative present tense, optionally prefixed (`feat:`, `fix:`, `docs:`, `chore:`).
-- Never commit `.env` or `node_modules/` — see `.gitignore`.
-- Open PRs as drafts early so a stalled teammate is visible before Day 6, not Day 7.
-
-**Reporting a bug or blocker:** raise it in the daily standup first — three people means most blockers are faster to solve by asking than by researching alone.
+- `.env`, `node_modules/`, and `uploads/` were never committed. See `.gitignore`.
 
 ## Acknowledgements
 
@@ -158,15 +163,13 @@ This is a closed, 3-person capstone team — not accepting outside contributions
 
 ## License
 
-Internship capstone project — not currently licensed for reuse or redistribution.
+Internship capstone project. Not currently licensed for reuse or redistribution.
 
 ## Status
 
-Foundation, Auth, and Employer tracks are implemented and mounted under `/api`. Applicant, Job Listing, and Application tracks remain scaffolded — service/controller/route files exist with TODO headers but are not yet wired up or mounted.
+Complete. All five tracks (auth, applicant, employer, job listing, application) are implemented, mounted, and reviewed. GitHub Advanced Security's rate-limiting findings were addressed across the affected routes, and a job listings migration typo (`down()` dropping the wrong table name) was fixed.
 
-## Next steps
+## Possible follow-ups
 
-- Implement `src/app.js`, mount `src/routes/index.js`, and register the middleware pipeline.
-- Complete `src/config/env.js` and align environment variables between `.env.example` and Sequelize config.
-- Wire the route/controller/service flow for auth, applicants, employers, job listings, and applications.
-- Add real tests under `tests/unit/` and `tests/integration/`, then replace the current `npm test` stub.
+- Add real tests under `tests/unit/` and `tests/integration/`, then retire the current `npm test` stub. This is the one deliberately deferred item; everything else in this list is optional polish.
+- Align `applicantProfiles.techstack` to camelCase (`techStack`) if the team decides the naming drift is worth fixing.
