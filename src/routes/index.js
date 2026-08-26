@@ -1,14 +1,3 @@
-/**
- *   This fileMounts every resource router under /api. This is the one file app.js imports.
- *
- * Build this file to:
- *   - router.use('/auth', authRoutes)
- *   - router.use('/applicants', applicantRoutes)
- *   - router.use('/employers', employerRoutes)
- *   - router.use('/jobs', jobListingRoutes)
- *   - router.use('/applications', applicationRoutes)
- *   - exports default router
- */
 import { Router } from "express";
 import authRoutes from "./auth.routes.js";
 import employerRoutes from "./employer.routes.js";

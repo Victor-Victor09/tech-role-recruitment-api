@@ -23,22 +23,3 @@ app.use(errorMiddleware);
 
 
 export default app;
-
-
-
-/**
- *  This file builds and exports the Express app. server.js is the only file that calls .listen().
- *
- *  Build this file to:
- *   - Create the express app
- *   - Apply express.json(), express.urlencoded({ extended: true }), cors()
- *   - Mount routes/index.js under /api
- *   - Mount error.middleware.js LAST, after all routes
- *   - exports defaultapp
- *
- * Depends on / imports from:
- *   - express
- *   - cors
- *   - src/routes/index.js
- *   - src/middleware/error.middleware.js
- */
